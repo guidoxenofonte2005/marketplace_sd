@@ -1,0 +1,27 @@
+services:
+  notifications_database:
+    image: postgres:16
+    container_name: notifications_db
+    
+    restart: unless_stopped
+    
+    environment:
+      POSTGRES_USER: notifications_user
+      POSTGRES_PASSWORD: nofitications_password
+      POSTGRES_DB: notifications
+    
+    ports:
+      "5433:5432"
+    
+    volumes:
+      - ./notifications/server/db/migrations.sql:/docker-entrypoint-initdb.d/migrations.sql
+      - notifications_database_data:/var/lib/postgresql/data
+    
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U notifications_user -d notifications"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  notifications_database_data:
