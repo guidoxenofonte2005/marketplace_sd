@@ -4,7 +4,7 @@ package notifications;
 
 message Event {
   string event_id = 1;
-  string event_type = 2; 
+  string event_type = 2;
   string target_user = 3; // ID do usuário
   string payload = 4;
   int64 lamport_ts = 5; // timestamp lógico de Lamport
@@ -30,13 +30,14 @@ message GetHistoryResponse {
 }
 
 service NotificationService {
-  rpc EmitEvent (Event) returns (EmitEventResponse);
+  rpc EmitEvent(Event) returns (EmitEventResponse);
 
-  rpc Subscribe (SubscribeRequest) returns (stream Event);
+  rpc Subscribe(SubscribeRequest) returns (stream Event);
 
-  rpc GetHistory (GetHistoryRequest) returns (GetHistoryResponse);
+  rpc GetHistory(GetHistoryRequest) returns (GetHistoryResponse);
 }
 
 service NotificationReplicationService {
-  rpc ReplicateEvent (Event) returns (EmitEventResponse);
+  rpc ReplicateEvent(Event) returns (EmitEventResponse);
 }
+

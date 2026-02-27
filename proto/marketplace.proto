@@ -13,7 +13,7 @@ message Product {
 message ListProductsRequest {}
 
 message ListProductsResponse {
-  repeated Product product_list = 1;
+  repeated Product product_lists = 1;
 }
 
 message GetProductRequest {
@@ -65,3 +65,4 @@ service ReplicationService {
   rpc ReplicateProduct(ReplicateProductRequest) returns (ReplicationAcknowledgement);
   rpc ReplicateOrder(ReplicateOrderRequest) returns (ReplicationAcknowledgement);
 }
+
