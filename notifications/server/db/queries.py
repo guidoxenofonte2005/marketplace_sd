@@ -1,4 +1,4 @@
-async def saveEvent(connection, event):
+async def saveEvent(connection, event) -> None:
     await connection.execute(
         "INSERT INTO events (event_id, event_type, target_user, payload, lamport_ts, emmited_time) VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT (event_id) DO NOTHING",
         event.event_id,
