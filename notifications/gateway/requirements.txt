@@ -10,6 +10,7 @@ httptools==0.7.1
 idna==3.11
 protobuf==6.33.5
 pydantic==2.12.5
+pydantic-settings==2.13.1
 pydantic_core==2.41.5
 python-dotenv==1.2.1
 PyYAML==6.0.3
