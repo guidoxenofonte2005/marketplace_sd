@@ -16,5 +16,10 @@ class Settings(BaseSettings):
     database_user: str = "notifications_user"
     database_password: str = "notifications_password"
 
+    # dados do consul
+    consul_host: str = "localhost"
+    consul_port: int = 8500
+    service_name: str = "notifications-service"
+
 
 settings = Settings()
