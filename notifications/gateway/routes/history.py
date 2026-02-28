@@ -5,6 +5,7 @@ import traceback
 from fastapi import APIRouter, HTTPException
 from generated import notifications_pb2
 from notifications.gateway.grpc_client import getStub
+from notifications.gateway.retry import with_retry
 
 from loguru import logger
 
@@ -15,9 +16,9 @@ router = APIRouter()
 async def getHistory(user_id: str, limit: int = 10):
     try:
         stub = await getStub()
-        response = await stub.GetHistory(
+        response = await with_retry(lambda: stub.GetHistory(
             notifications_pb2.GetHistoryRequest(user_id=user_id, limit=limit)
-        )
+        ))
 
         events = [
             {

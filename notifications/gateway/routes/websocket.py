@@ -4,6 +4,7 @@ import grpc
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from generated import notifications_pb2
 from notifications.gateway.grpc_client import getStub
+from notifications.gateway.retry import with_retry
 
 from loguru import logger
 
@@ -17,9 +18,9 @@ async def websocketEndpoint(webSocket: WebSocket, user_id: str):
 
     try:
         stub = await getStub()
-        eventStream = await stub.Subscribe(
+        eventStream = await with_retry(lambda: stub.Subscribe(
             notifications_pb2.SubscribeRequest(user_id=user_id)
-        )
+        ))
 
         async for event in eventStream:
             jsonPayload = {
