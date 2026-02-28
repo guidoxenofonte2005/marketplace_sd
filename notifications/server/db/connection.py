@@ -5,7 +5,7 @@ from notifications.server.config import settings
 _connectionPool: asyncpg.Pool = None
 
 
-async def getConnectionPool():
+async def getConnectionPool() -> asyncpg.Pool:
     global _connectionPool
     if _connectionPool is None:
         _connectionPool = await asyncpg.create_pool(
@@ -16,7 +16,7 @@ async def getConnectionPool():
     return _connectionPool
 
 
-async def closeConnectionPool():
+async def closeConnectionPool() -> None:
     global _connectionPool
     if _connectionPool:
         await _connectionPool.close()
