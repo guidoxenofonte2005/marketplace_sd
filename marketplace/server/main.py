@@ -23,15 +23,9 @@ async def serve():
                 logger.warning("health_check falhou")
                 return False
 
-        cb = CircuitBreaker(
-            failure_threshold=3,
-            check_interval=getattr(settings, "circuit_check_interval", 5),
-            health_check=health_check,
-        )
-
         server = grpc.aio.server()
         marketplace_pb2_grpc.add_MarketplaceServiceServicer_to_server(
-            MarketplaceServicer(pool=pool, circuit=cb), server
+            MarketplaceServicer(), server
         )
         server.add_insecure_port(f"[::]:{settings.grpc_port}")
         await server.start()
