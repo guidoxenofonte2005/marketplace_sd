@@ -5,9 +5,9 @@ import asyncio
 from generated import notifications_pb2
 from generated import notifications_pb2_grpc
 
-import dispatcher
-import idempotency
-import lamport_clock
+import notifications.server.dispatcher
+import notifications.server.idempotency
+import notifications.server.lamport_clock
 
 
 """Implementação do serviço de notificações.

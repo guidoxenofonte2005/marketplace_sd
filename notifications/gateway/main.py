@@ -1,10 +1,10 @@
 import uvicorn
 from fastapi import FastAPI
 
-from navigation.gateway.routes.websocket import router as socketRouter
-from navigation.gateway.routes.history import router as historyRouter
+from notifications.gateway.routes.websocket import router as socketRouter
+from notifications.gateway.routes.history import router as historyRouter
 
-from config import settings
+from notifications.gateway.config import settings
 
 app = FastAPI()
 

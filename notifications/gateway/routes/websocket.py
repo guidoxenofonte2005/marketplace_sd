@@ -3,7 +3,7 @@ import grpc
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from generated import notifications_pb2
-from grpc_client import stub
+from notifications.gateway.grpc_client import getStub
 
 from loguru import logger
 
@@ -16,7 +16,8 @@ async def websocketEndpoint(webSocket: WebSocket, user_id: str):
     logger.info(f"Websocket aberto ao usuário {user_id}")
 
     try:
-        eventStream = stub.Subscribe(
+        stub = await getStub()
+        eventStream = await stub.Subscribe(
             notifications_pb2.SubscribeRequest(user_id=user_id)
         )
 

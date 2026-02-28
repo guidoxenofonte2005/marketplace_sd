@@ -1,8 +1,12 @@
 import grpc
 
+import traceback
+
 from fastapi import APIRouter, HTTPException
 from generated import notifications_pb2
-from grpc_client import stub
+from notifications.gateway.grpc_client import getStub
+
+from loguru import logger
 
 router = APIRouter()
 
@@ -10,7 +14,8 @@ router = APIRouter()
 @router.get("/notifications/{user_id}")
 async def getHistory(user_id: str, limit: int = 10):
     try:
-        response = stub.GetHistory(
+        stub = await getStub()
+        response = await stub.GetHistory(
             notifications_pb2.GetHistoryRequest(user_id=user_id, limit=limit)
         )
 
@@ -28,6 +33,8 @@ async def getHistory(user_id: str, limit: int = 10):
 
         return {"user_id": user_id, "events": events}
     except grpc.aio.AioRpcError as error:
+        logger.error(f"Erro ao buscar histório: {error}")
+        logger.error(traceback.format_exc())
         if error.code() == grpc.StatusCode.NOT_FOUND:
             raise HTTPException(status_code=404)
         raise HTTPException(status_code=500)
