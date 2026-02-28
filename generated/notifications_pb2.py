@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13notifications.proto\x12\rnotifications\"{\n\x05\x45vent\x12\x10\n\x08\x65vent_id\x18\x01 \x01(\t\x12\x12\n\nevent_type\x18\x02 \x01(\t\x12\x13\n\x0btarget_user\x18\x03 \x01(\t\x12\x0f\n\x07payload\x18\x04 \x01(\t\x12\x12\n\nlamport_ts\x18\x05 \x01(\x03\x12\x12\n\nemitted_at\x18\x06 \x01(\x03\"7\n\x11\x45mitEventResponse\x12\x10\n\x08received\x18\x01 \x01(\x08\x12\x10\n\x08\x65vent_id\x18\x02 \x01(\t\"#\n\x10SubscribeRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\t\"3\n\x11GetHistoryRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\t\x12\r\n\x05limit\x18\x02 \x01(\x05\":\n\x12GetHistoryResponse\x12$\n\x06\x65vents\x18\x01 \x03(\x0b\x32\x14.notifications.Event2\xf3\x01\n\x13NotificationService\x12\x43\n\tEmitEvent\x12\x14.notifications.Event\x1a .notifications.EmitEventResponse\x12\x44\n\tSubscribe\x12\x1f.notifications.SubscribeRequest\x1a\x14.notifications.Event0\x01\x12Q\n\nGetHistory\x12 .notifications.GetHistoryRequest\x1a!.notifications.GetHistoryResponse2j\n\x1eNotificationReplicationService\x12H\n\x0eReplicateEvent\x12\x14.notifications.Event\x1a .notifications.EmitEventResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13notifications.proto\x12\rnotifications\"}\n\x05\x45vent\x12\x10\n\x08\x65vent_id\x18\x01 \x01(\t\x12\x12\n\nevent_type\x18\x02 \x01(\t\x12\x13\n\x0btarget_user\x18\x03 \x01(\t\x12\x0f\n\x07payload\x18\x04 \x01(\t\x12\x12\n\nlamport_ts\x18\x05 \x01(\x03\x12\x14\n\x0c\x65mitted_time\x18\x06 \x01(\x03\"7\n\x11\x45mitEventResponse\x12\x10\n\x08received\x18\x01 \x01(\x08\x12\x10\n\x08\x65vent_id\x18\x02 \x01(\t\"#\n\x10SubscribeRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\t\"3\n\x11GetHistoryRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\t\x12\r\n\x05limit\x18\x02 \x01(\x05\":\n\x12GetHistoryResponse\x12$\n\x06\x65vents\x18\x01 \x03(\x0b\x32\x14.notifications.Event2\xf3\x01\n\x13NotificationService\x12\x43\n\tEmitEvent\x12\x14.notifications.Event\x1a .notifications.EmitEventResponse\x12\x44\n\tSubscribe\x12\x1f.notifications.SubscribeRequest\x1a\x14.notifications.Event0\x01\x12Q\n\nGetHistory\x12 .notifications.GetHistoryRequest\x1a!.notifications.GetHistoryResponse2j\n\x1eNotificationReplicationService\x12H\n\x0eReplicateEvent\x12\x14.notifications.Event\x1a .notifications.EmitEventResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -32,17 +32,17 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'notifications_pb2', _global
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_EVENT']._serialized_start=38
-  _globals['_EVENT']._serialized_end=161
-  _globals['_EMITEVENTRESPONSE']._serialized_start=163
-  _globals['_EMITEVENTRESPONSE']._serialized_end=218
-  _globals['_SUBSCRIBEREQUEST']._serialized_start=220
-  _globals['_SUBSCRIBEREQUEST']._serialized_end=255
-  _globals['_GETHISTORYREQUEST']._serialized_start=257
-  _globals['_GETHISTORYREQUEST']._serialized_end=308
-  _globals['_GETHISTORYRESPONSE']._serialized_start=310
-  _globals['_GETHISTORYRESPONSE']._serialized_end=368
-  _globals['_NOTIFICATIONSERVICE']._serialized_start=371
-  _globals['_NOTIFICATIONSERVICE']._serialized_end=614
-  _globals['_NOTIFICATIONREPLICATIONSERVICE']._serialized_start=616
-  _globals['_NOTIFICATIONREPLICATIONSERVICE']._serialized_end=722
+  _globals['_EVENT']._serialized_end=163
+  _globals['_EMITEVENTRESPONSE']._serialized_start=165
+  _globals['_EMITEVENTRESPONSE']._serialized_end=220
+  _globals['_SUBSCRIBEREQUEST']._serialized_start=222
+  _globals['_SUBSCRIBEREQUEST']._serialized_end=257
+  _globals['_GETHISTORYREQUEST']._serialized_start=259
+  _globals['_GETHISTORYREQUEST']._serialized_end=310
+  _globals['_GETHISTORYRESPONSE']._serialized_start=312
+  _globals['_GETHISTORYRESPONSE']._serialized_end=370
+  _globals['_NOTIFICATIONSERVICE']._serialized_start=373
+  _globals['_NOTIFICATIONSERVICE']._serialized_end=616
+  _globals['_NOTIFICATIONREPLICATIONSERVICE']._serialized_start=618
+  _globals['_NOTIFICATIONREPLICATIONSERVICE']._serialized_end=724
 # @@protoc_insertion_point(module_scope)
