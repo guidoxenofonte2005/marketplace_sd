@@ -1,4 +1,5 @@
 import grpc
+
 from loguru import logger
 from generated import marketplace_pb2_grpc
 from marketplace.server.circuit_breaker import CircuitBreaker, CircuitOpenError
