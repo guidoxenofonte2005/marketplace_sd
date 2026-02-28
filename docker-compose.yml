@@ -3,15 +3,15 @@ services:
     image: postgres:16
     container_name: notifications_db
     
-    restart: unless_stopped
+    restart: unless-stopped
     
     environment:
       POSTGRES_USER: notifications_user
-      POSTGRES_PASSWORD: nofitications_password
+      POSTGRES_PASSWORD: notifications_password
       POSTGRES_DB: notifications
     
     ports:
-      "5433:5432"
+      - "5433:5432"
     
     volumes:
       - ./notifications/server/db/migrations.sql:/docker-entrypoint-initdb.d/migrations.sql
