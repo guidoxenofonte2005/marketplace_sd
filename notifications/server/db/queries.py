@@ -6,7 +6,7 @@ async def saveEvent(connection, event) -> None:
         event.target_user,
         event.payload,
         event.lamport_ts,
-        event.emitted_time,
+        event.emmited_time,
     )
 
 

@@ -8,6 +8,7 @@ grpcio-tools==1.78.0
 h11==0.16.0
 httptools==0.7.1
 idna==3.11
+loguru==0.7.3
 protobuf==6.33.5
 pydantic==2.12.5
 pydantic-settings==2.13.1
