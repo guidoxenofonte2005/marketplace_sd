@@ -11,7 +11,7 @@ services:
       POSTGRES_DB: marketplace
     
     ports:
-      - "5433:5432"
+      - "5434:5432"
     
     volumes:
       - ./marketplace/server/db/migrations.sql:/docker-entrypoint-initdb.d/migrations.sql

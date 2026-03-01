@@ -11,7 +11,7 @@ class Settings(BaseSettings):
 
     # dados do banco
     database_host: str = "localhost"
-    database_port: int = 5432
+    database_port: int = 5434
     database_name: str = "marketplace"
     database_user: str = "marketplace_user"
     database_password: str = "marketplace_password"
