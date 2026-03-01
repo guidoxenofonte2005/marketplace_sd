@@ -7,7 +7,7 @@ from typing import Optional
 
 class MarketplaceClient:
     def __init__(self, target: Optional[str] = None):
-        self._target = target or f"{gw_config.settings.marketplace_host}:{gw_config.settings.marketplace_port}"
+        self._target = target or f"{gw_config.settings.grpc_host}:{gw_config.settings.grpc_port}"
         self._channel: Optional[grpc.aio.Channel] = None
         self._stub: Optional[marketplace_pb2_grpc.MarketplaceServiceStub] = None
 
@@ -27,7 +27,20 @@ class MarketplaceClient:
             self._channel = None
             self._stub = None
 
-    # Exemplo de wrapper — adapte aos seus protos
     async def list_products(self, request):
         await self.connect()
         return await self._stub.ListProducts(request)
+
+    async def get_product(self, request):
+        await self.connect()
+        return await self._stub.GetProduct(request)
+
+    async def place_order(self, request):
+        await self.connect()
+        return await self._stub.PlaceOrder(request)
+
+    async def get_order(self, request):
+        await self.connect()
+        return await self._stub.GetOrder(request)
+
+client = MarketplaceClient()
