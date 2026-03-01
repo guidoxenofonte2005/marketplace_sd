@@ -1,4 +1,28 @@
 services:
+  marketplace_database:
+    image: postgres:16
+    container_name: marketplace_db
+
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: marketplace_user
+      POSTGRES_PASSWORD: marketplace_password
+      POSTGRES_DB: marketplace
+    
+    ports:
+      - "5433:5432"
+    
+    volumes:
+      - ./marketplace/server/db/migrations.sql:/docker-entrypoint-initdb.d/migrations.sql
+      - marketplace_database_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U marketplace_user -d marketplace"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   notifications_database:
     image: postgres:16
     container_name: notifications_db
@@ -37,3 +61,4 @@ services:
 
 volumes:
   notifications_database_data:
+  marketplace_database_data:

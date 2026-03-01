@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x11marketplace.proto\x12\x0emarketplace_sd\"b\n\x07Product\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\r\n\x05price\x18\x04 \x01(\x02\x12\x19\n\x11quantity_in_stock\x18\x05 \x01(\x05\"\x15\n\x13ListProductsRequest\"E\n\x14ListProductsResponse\x12-\n\x0cproduct_list\x18\x01 \x03(\x0b\x32\x17.marketplace_sd.Product\"\'\n\x11GetProductRequest\x12\x12\n\nproduct_id\x18\x01 \x01(\t\"1\n\tOrderItem\x12\x12\n\nproduct_id\x18\x01 \x01(\t\x12\x10\n\x08quantity\x18\x02 \x01(\x05\"W\n\x11PlaceOrderRequest\x12\x10\n\x08\x62uyer_id\x18\x01 \x01(\t\x12\x30\n\rordered_items\x18\x02 \x03(\x0b\x32\x19.marketplace_sd.OrderItem\"~\n\x05Order\x12\n\n\x02id\x18\x01 \x01(\t\x12\x10\n\x08\x62uyer_id\x18\x02 \x01(\t\x12\x30\n\rordered_items\x18\x03 \x03(\x0b\x32\x19.marketplace_sd.OrderItem\x12\x0e\n\x06status\x18\x04 \x01(\t\x12\x15\n\rcreation_time\x18\x05 \x01(\x03\"#\n\x0fGetOrderRequest\x12\x10\n\x08order_id\x18\x01 \x01(\t\"C\n\x17ReplicateProductRequest\x12(\n\x07product\x18\x01 \x01(\x0b\x32\x17.marketplace_sd.Product\"=\n\x15ReplicateOrderRequest\x12$\n\x05order\x18\x01 \x01(\x0b\x32\x15.marketplace_sd.Order\"-\n\x1aReplicationAcknowledgement\x12\x0f\n\x07success\x18\x01 \x01(\x08\x32\xc5\x02\n\x12MarketplaceService\x12Y\n\x0cListProducts\x12#.marketplace_sd.ListProductsRequest\x1a$.marketplace_sd.ListProductsResponse\x12H\n\nGetProduct\x12!.marketplace_sd.GetProductRequest\x1a\x17.marketplace_sd.Product\x12\x46\n\nPlaceOrder\x12!.marketplace_sd.PlaceOrderRequest\x1a\x15.marketplace_sd.Order\x12\x42\n\x08GetOrder\x12\x1f.marketplace_sd.GetOrderRequest\x1a\x15.marketplace_sd.Order2\xe2\x01\n\x12ReplicationService\x12g\n\x10ReplicateProduct\x12\'.marketplace_sd.ReplicateProductRequest\x1a*.marketplace_sd.ReplicationAcknowledgement\x12\x63\n\x0eReplicateOrder\x12%.marketplace_sd.ReplicateOrderRequest\x1a*.marketplace_sd.ReplicationAcknowledgementb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x11marketplace.proto\x12\x0emarketplace_sd\"b\n\x07Product\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\r\n\x05price\x18\x04 \x01(\x02\x12\x19\n\x11quantity_in_stock\x18\x05 \x01(\x05\"\x15\n\x13ListProductsRequest\"F\n\x14ListProductsResponse\x12.\n\rproduct_lists\x18\x01 \x03(\x0b\x32\x17.marketplace_sd.Product\"\'\n\x11GetProductRequest\x12\x12\n\nproduct_id\x18\x01 \x01(\t\"1\n\tOrderItem\x12\x12\n\nproduct_id\x18\x01 \x01(\t\x12\x10\n\x08quantity\x18\x02 \x01(\x05\"W\n\x11PlaceOrderRequest\x12\x10\n\x08\x62uyer_id\x18\x01 \x01(\t\x12\x30\n\rordered_items\x18\x02 \x03(\x0b\x32\x19.marketplace_sd.OrderItem\"~\n\x05Order\x12\n\n\x02id\x18\x01 \x01(\t\x12\x10\n\x08\x62uyer_id\x18\x02 \x01(\t\x12\x30\n\rordered_items\x18\x03 \x03(\x0b\x32\x19.marketplace_sd.OrderItem\x12\x0e\n\x06status\x18\x04 \x01(\t\x12\x15\n\rcreation_time\x18\x05 \x01(\x03\"#\n\x0fGetOrderRequest\x12\x10\n\x08order_id\x18\x01 \x01(\t\"C\n\x17ReplicateProductRequest\x12(\n\x07product\x18\x01 \x01(\x0b\x32\x17.marketplace_sd.Product\"=\n\x15ReplicateOrderRequest\x12$\n\x05order\x18\x01 \x01(\x0b\x32\x15.marketplace_sd.Order\"-\n\x1aReplicationAcknowledgement\x12\x0f\n\x07success\x18\x01 \x01(\x08\x32\xc5\x02\n\x12MarketplaceService\x12Y\n\x0cListProducts\x12#.marketplace_sd.ListProductsRequest\x1a$.marketplace_sd.ListProductsResponse\x12H\n\nGetProduct\x12!.marketplace_sd.GetProductRequest\x1a\x17.marketplace_sd.Product\x12\x46\n\nPlaceOrder\x12!.marketplace_sd.PlaceOrderRequest\x1a\x15.marketplace_sd.Order\x12\x42\n\x08GetOrder\x12\x1f.marketplace_sd.GetOrderRequest\x1a\x15.marketplace_sd.Order2\xe2\x01\n\x12ReplicationService\x12g\n\x10ReplicateProduct\x12\'.marketplace_sd.ReplicateProductRequest\x1a*.marketplace_sd.ReplicationAcknowledgement\x12\x63\n\x0eReplicateOrder\x12%.marketplace_sd.ReplicateOrderRequest\x1a*.marketplace_sd.ReplicationAcknowledgementb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -36,25 +36,25 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_LISTPRODUCTSREQUEST']._serialized_start=137
   _globals['_LISTPRODUCTSREQUEST']._serialized_end=158
   _globals['_LISTPRODUCTSRESPONSE']._serialized_start=160
-  _globals['_LISTPRODUCTSRESPONSE']._serialized_end=229
-  _globals['_GETPRODUCTREQUEST']._serialized_start=231
-  _globals['_GETPRODUCTREQUEST']._serialized_end=270
-  _globals['_ORDERITEM']._serialized_start=272
-  _globals['_ORDERITEM']._serialized_end=321
-  _globals['_PLACEORDERREQUEST']._serialized_start=323
-  _globals['_PLACEORDERREQUEST']._serialized_end=410
-  _globals['_ORDER']._serialized_start=412
-  _globals['_ORDER']._serialized_end=538
-  _globals['_GETORDERREQUEST']._serialized_start=540
-  _globals['_GETORDERREQUEST']._serialized_end=575
-  _globals['_REPLICATEPRODUCTREQUEST']._serialized_start=577
-  _globals['_REPLICATEPRODUCTREQUEST']._serialized_end=644
-  _globals['_REPLICATEORDERREQUEST']._serialized_start=646
-  _globals['_REPLICATEORDERREQUEST']._serialized_end=707
-  _globals['_REPLICATIONACKNOWLEDGEMENT']._serialized_start=709
-  _globals['_REPLICATIONACKNOWLEDGEMENT']._serialized_end=754
-  _globals['_MARKETPLACESERVICE']._serialized_start=757
-  _globals['_MARKETPLACESERVICE']._serialized_end=1082
-  _globals['_REPLICATIONSERVICE']._serialized_start=1085
-  _globals['_REPLICATIONSERVICE']._serialized_end=1311
+  _globals['_LISTPRODUCTSRESPONSE']._serialized_end=230
+  _globals['_GETPRODUCTREQUEST']._serialized_start=232
+  _globals['_GETPRODUCTREQUEST']._serialized_end=271
+  _globals['_ORDERITEM']._serialized_start=273
+  _globals['_ORDERITEM']._serialized_end=322
+  _globals['_PLACEORDERREQUEST']._serialized_start=324
+  _globals['_PLACEORDERREQUEST']._serialized_end=411
+  _globals['_ORDER']._serialized_start=413
+  _globals['_ORDER']._serialized_end=539
+  _globals['_GETORDERREQUEST']._serialized_start=541
+  _globals['_GETORDERREQUEST']._serialized_end=576
+  _globals['_REPLICATEPRODUCTREQUEST']._serialized_start=578
+  _globals['_REPLICATEPRODUCTREQUEST']._serialized_end=645
+  _globals['_REPLICATEORDERREQUEST']._serialized_start=647
+  _globals['_REPLICATEORDERREQUEST']._serialized_end=708
+  _globals['_REPLICATIONACKNOWLEDGEMENT']._serialized_start=710
+  _globals['_REPLICATIONACKNOWLEDGEMENT']._serialized_end=755
+  _globals['_MARKETPLACESERVICE']._serialized_start=758
+  _globals['_MARKETPLACESERVICE']._serialized_end=1083
+  _globals['_REPLICATIONSERVICE']._serialized_start=1086
+  _globals['_REPLICATIONSERVICE']._serialized_end=1312
 # @@protoc_insertion_point(module_scope)
