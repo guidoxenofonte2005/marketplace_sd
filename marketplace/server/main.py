@@ -3,6 +3,7 @@ import grpc
 from loguru import logger
 
 from generated import marketplace_pb2_grpc
+from marketplace.server import discovery
 from marketplace.server.config import settings
 from marketplace.server.servicer import MarketplaceServicer
 from marketplace.server.db.connection import get_pool, close_pool
@@ -35,6 +36,9 @@ async def serve():
         )
         server.add_insecure_port(f"[::]:{settings.grpc_port}")
         await server.start()
+
+        await discovery.register()
+
         logger.info(f"Marketplace gRPC rodando na porta {settings.grpc_port}")
         await server.wait_for_termination()
     finally:
