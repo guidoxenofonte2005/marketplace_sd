@@ -3,10 +3,12 @@ import asyncio
 from generated import notifications_pb2
 from generated import notifications_pb2_grpc
 
-from notifications.server import dispatcher, idempotency
+from notifications.server import dispatcher, idempotency, replication
 from notifications.server.db.connection import getConnectionPool
 from notifications.server.lamport_clock import LamportClock
 from notifications.server.db import queries
+
+from loguru import logger
 
 clock: LamportClock = LamportClock()
 
@@ -31,11 +33,11 @@ class NotificationServicer(notifications_pb2_grpc.NotificationServiceServicer):
                 connection=connection, event_id=request.event_id
             )
             if isAlreadyProcessed:
-                # TODO: retornar EmitEventResponse(received=True, event_id=request.event_id)
-                pass
+                logger.info(f"Evento duplicado - ignorando {request.event_id}")
+                return notifications_pb2.EmitEventResponse(received=True, event_id=request.event_id)
 
             newTimestamp = await clock.update(request.lamport_ts)
-            # TODO: relatório no logger dzd q o relógio tá atualizado
+            logger.info(f"Lamport Clock atualizado - {newTimestamp}")
 
             await queries.saveEvent(connection=connection, event=request)
 
@@ -43,8 +45,10 @@ class NotificationServicer(notifications_pb2_grpc.NotificationServiceServicer):
                 connection=connection, event_id=request.event_id
             )
 
-        await dispatcher.dispatch(user_id=request.targer_user, event=request)
-        # TODO: logger
+        await dispatcher.dispatch(user_id=request.target_user, event=request)
+        logger.info(f"Evento {request.event_id} entregue para {request.target_user}")
+
+        asyncio.create_task(replication.propagate(event=request))
 
         return notifications_pb2.EmitEventResponse(
             received=True, event_id=request.event_id
@@ -116,7 +120,7 @@ class NotificationServicer(notifications_pb2_grpc.NotificationServiceServicer):
             rows = await queries.getUserHistory(
                 connection=connection, user_id=request.user_id, limit=limit
             )
-        
+
         events = [
             notifications_pb2.Event(
                 event_id=row["event_id"],
@@ -124,9 +128,36 @@ class NotificationServicer(notifications_pb2_grpc.NotificationServiceServicer):
                 target_user=row["target_user"],
                 payload=row["payload"] or "",
                 lamport_ts=row["lamport_ts"],
-                emitted_at=row["emmited_time"]
+                emmited_time=row["emmited_time"],
             )
             for row in rows
         ]
 
         return notifications_pb2.GetHistoryResponse(events=events)
+
+
+class NotificationReplicationServicer(
+    notifications_pb2_grpc.NotificationReplicationServiceServicer
+):
+    async def ReplicateEvent(self, request, context):
+        pool = await getConnectionPool()
+
+        async with pool.acquire() as connection:
+            isAlreadyProcessed = await idempotency.checkIfProcessed(
+                connection=connection, event_id=request.event_id
+            )
+            if isAlreadyProcessed:
+                logger.info(f"Evento já salvo - ignorando replicação")
+                return notifications_pb2.EmitEventResponse(
+                    received=True, event_id=request.event_id
+                )
+
+            await queries.saveEvent(connection=connection, event=request)
+            await idempotency.markAsProcessed(
+                connection=connection, event_id=request.event_id
+            )
+            logger.info(f"Evento {request.event_id} salvo na instância secundária")
+
+        return notifications_pb2.EmitEventResponse(
+            received=True, event_id=request.event_id
+        )

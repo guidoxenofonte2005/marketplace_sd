@@ -1,3 +1,5 @@
+import os
+
 from pydantic_settings import BaseSettings
 
 
@@ -20,6 +22,9 @@ class Settings(BaseSettings):
     consul_host: str = "localhost"
     consul_port: int = 8500
     service_name: str = "notifications-service"
+
+    class Config:
+        env_file = os.getenv("ENV_FILE", ".env")
 
 
 settings = Settings()

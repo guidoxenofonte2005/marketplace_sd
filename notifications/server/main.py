@@ -40,7 +40,7 @@ from generated import notifications_pb2_grpc
 from notifications.server import discovery
 from notifications.server.config import settings
 #from notifications.server.db.connection import getConnectionPool, closeConnectionPool
-from notifications.server.servicer import NotificationServicer
+from notifications.server.servicer import NotificationServicer, NotificationReplicationServicer
 
 
 async def serve():
@@ -57,6 +57,12 @@ async def serve():
     # Registra o serviço de notificações
     notifications_pb2_grpc.add_NotificationServiceServicer_to_server(
         servicer=NotificationServicer(),
+        server=server
+    )
+
+    # Registra o serviço de replicação
+    notifications_pb2_grpc.add_NotificationReplicationServiceServicer_to_server(
+        servicer=NotificationReplicationServicer(),
         server=server
     )
 

@@ -6,7 +6,7 @@ CREATE TABLE
     target_user TEXT NOT NULL,
     payload TEXT,
     lamport_ts BIGINT NOT NULL,
-    emmited_time TIMESTAMP NOT NULL,
+    emmited_time BIGINT NOT NULL,
     receive_time TIMESTAMP DEFAULT NOW ()
   );
 
