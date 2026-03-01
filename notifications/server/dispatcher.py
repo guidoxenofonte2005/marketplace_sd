@@ -8,24 +8,24 @@ _queues: Dict[str, asyncio.Queue] = {}
 _lock = asyncio.Lock()
 
 # Retorna a fila do usuário, se não existir, cria uma nova fila e retorna
-async def get_queue(user_id: str) -> asyncio.Queue:
+async def register(user_id: str) -> asyncio.Queue:
     async with _lock:
         if user_id not in _queues:
             _queues[user_id] = asyncio.Queue()
         return _queues[user_id]
 
 # Coloca um evento na fila do usuário
-async def enqueue(user_id: str, event):
-    queue = await get_queue(user_id)
+async def dispatch(user_id: str, event):
+    queue = await register(user_id)
     await queue.put(event)
 
 # Retira um item da fila do usuário e retorna, se a fila estiver vazia, 
 # a função irá esperar até que um item seja adicionado
 async def dequeue(user_id: str):
-    queue = await get_queue(user_id)
+    queue = await register(user_id)
     return await queue.get()
 
 
 async def get_or_create_queue(user_id: str) -> asyncio.Queue:
     """Alias para get_queue(), apenas por legibilidade."""
-    return await get_queue(user_id)
+    return await register(user_id)

@@ -1,5 +1,11 @@
-import consul.aio
+import consul
 
+import asyncio
+
+if not hasattr(asyncio, "coroutine"):
+    asyncio.coroutine = lambda f: f
+
+from consul.aio import Consul
 from notifications.server.config import settings
 from loguru import logger
 
@@ -7,7 +13,7 @@ from loguru import logger
 async def register() -> None:
     client = Consul(host=settings.consul_host, port=settings.consul_port)
 
-    await client.agent.service.register(
+    client.agent.service.register(
         name=settings.service_name,
         address="localhost",
         port=settings.grpc_port,

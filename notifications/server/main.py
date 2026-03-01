@@ -37,6 +37,7 @@ import grpc
 from loguru import logger
 
 from generated import notifications_pb2_grpc
+from notifications.server import discovery
 from notifications.server.config import settings
 #from notifications.server.db.connection import getConnectionPool, closeConnectionPool
 from notifications.server.servicer import NotificationServicer
@@ -66,6 +67,8 @@ async def serve():
     # Inicia o servidor
     await server.start()
     logger.success(f"Servidor gRPC de Notificações rodando em {address}")
+
+    await discovery.register()
 
     try:
         # Mantém o servidor ativo até receber SIGINT / SIGTERM

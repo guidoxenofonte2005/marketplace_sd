@@ -12,7 +12,7 @@ async def with_retry(function):
 
     for attempt in range(MAX_RETRIES):
         try:
-            return await function
+            return await function()
         except grpc.aio.AioRpcError as grpcError:
             retryable_errors = [
                 grpc.StatusCode.UNAVAILABLE,
