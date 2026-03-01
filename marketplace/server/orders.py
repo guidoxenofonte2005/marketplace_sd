@@ -23,11 +23,11 @@ async def placeOrder(connection, buyer_id, items):
         await createOrderItem(
             connection=connection,
             order_id=order["id"],
-            product_id=item.id,
+            product_id=item.product_id,
             product_quantity=item.quantity,
         )
         await updateStock(
-            connection=connection, product_id=item.id, product_quantity=item.quantity
+            connection=connection, product_id=item.product_id, product_quantity=item.quantity
         )
 
     return order

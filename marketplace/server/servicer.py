@@ -41,7 +41,7 @@ class MarketplaceServicer(marketplace_pb2_grpc.MarketplaceServiceServicer):
             return marketplace_pb2.ListProductsResponse(product_lists=product_list)
         except Exception as e:
             logger.exception("Erro em ListProducts")
-            context.send_code(grpc.StatusCode.INTERNAL)
+            context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details(str(e))
 
             return marketplace_pb2.ListProductsResponse()

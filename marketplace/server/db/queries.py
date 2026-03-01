@@ -22,8 +22,8 @@ async def updateStock(connection, product_id, product_quantity):
 
 # order queries
 async def createOrder(connection, buyer_id):
-    response = await connection.execute(
-        "INSERT INTO orders (buyer_id, status) VALUES ($1, 'pendind') RETURNING *",
+    response = await connection.fetchrow(
+        "INSERT INTO orders (buyer_id, status) VALUES ($1, 'pending') RETURNING *",
         buyer_id,
     )
     return response
