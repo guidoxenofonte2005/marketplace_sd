@@ -18,7 +18,7 @@ async def place_order(body: dict):
             for item in body.get("items", [])
         ]
 
-        order = with_retry(
+        order = await with_retry(
             lambda: client.place_order(
                 marketplace_pb2.PlaceOrderRequest(
                     buyer_id=body.get("buyer_id", ""), ordered_items=items
