@@ -16,30 +16,33 @@ MAX_PENDING_EVENTS = 100
 async def emit(
     event_type: str, payload: str, target_user: str, circuit_breaker: CircuitBreaker
 ):
-    event = notifications_pb2.Event(
-        event_id=str(uuid.uuid4()),
-        event_type=event_type,
-        target_user=target_user,
-        payload=payload,
-        lamport_ts=0,
-        emmited_time=0,
-    )
-
-    if circuit_breaker.is_open():
-        _enqueue(event)
-        return
-
     try:
-        circuit_breaker.call(lambda: _send(event))
-        logger.info(f"Evento {event_type} emitido para {target_user}")
+        event = notifications_pb2.Event(
+            event_id=str(uuid.uuid4()),
+            event_type=event_type,
+            target_user=target_user,
+            payload=payload,
+            lamport_ts=0,
+            emmited_time=0,
+        )
 
-        await _flush_pending(circuit_breaker)
-    except CircuitOpenError:
-        logger.warning(f"Evento {event_type} enfileirado (circuito aberto)")
-        _enqueue(event)
+        if circuit_breaker.is_open:
+            await _enqueue(event)
+            return
+
+        try:
+            await circuit_breaker.call(lambda: _send(event))
+            logger.info(f"Evento {event_type} emitido para {target_user}")
+
+            await _flush_pending(circuit_breaker)
+        except CircuitOpenError:
+            logger.warning(f"Evento {event_type} enfileirado (circuito aberto)")
+            await _enqueue(event)
+        except Exception as e:
+            logger.warning(f"Falha ao emitir evento {event_type} - {e}")
+            await _enqueue(event)
     except Exception as e:
-        logger.warning(f"Falha ao emitir evento {event_type} - {e}")
-        _enqueue(event)
+        logger.exception(f"Erro inesperado no emitter - {e}")
 
 
 async def _send(event):
@@ -70,5 +73,5 @@ async def _flush_pending(circuit_breaker: CircuitBreaker):
             await circuit_breaker.call(lambda: _send(item))
             logger.info(f"Evento pendente reenviado: {item.event_id}")
         except Exception:
-            _enqueue(item)
+            await _enqueue(item)
             break

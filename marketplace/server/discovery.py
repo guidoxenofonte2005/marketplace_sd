@@ -1,34 +1,53 @@
-import consul
+import aiohttp
 
-from consul.aio import Consul
 from marketplace.server.config import settings
 from loguru import logger
 
 
-async def register() -> None:
-    client = Consul(host=settings.consul_host, port=settings.consul_port)
+CONSUL_BASE = f"http://{settings.consul_host}:{settings.consul_port}/v1"
 
-    await client.agent.service.register(
-        name=settings.service_name,
-        address="localhost",
-        port=settings.grpc_port,
-        check=consul.Check.ttl("15s"),
-    )
 
-    logger.info(f"Serviço {settings.service_name} encontrado no Consul")
+async def register():
+    payload = {
+        "Name": settings.service_name,
+        "Address": "172.17.0.1",
+        "Port": settings.grpc_port,
+        "Check": {
+            "TCP": f"172.17.0.1:{settings.grpc_port}",
+            "Interval": "10s",
+            "DeregisterCriticalServiceAfter": "1m"
+        }
+    }
+
+    async with aiohttp.ClientSession() as session:
+        async with session.put(
+            f"{CONSUL_BASE}/agent/service/register",
+            json=payload
+        ) as response:
+            if response.status == 200:
+                logger.info(f"Serviço '{settings.service_name}' registrado no Consul.")
+            else:
+                text = await response.text()
+                raise RuntimeError(f"Erro ao registrar: {response.status} — {text}")
 
 
 async def getService(name: str) -> str:
-    client = Consul(host=settings.consul_host, port=settings.consul_port)
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            f"{CONSUL_BASE}/health/service/{name}",
+            params={"passing": "true"}
+        ) as response:
+            if response.status != 200:
+                raise RuntimeError(f"Erro ao consultar Consul: {response.status}")
 
-    _, services = await client.health.service(name, passing=True)
+            services = await response.json()
 
-    if not services:
-        raise RuntimeError(f"Nenhuma instância de serviço encontrada para {name}")
+            if not services:
+                raise RuntimeError(f"Nenhuma instância saudável encontrada para '{name}'")
 
-    service = services[0]["Service"]
-    service_addr = service["Address"]
-    service_port = service["Port"]
+            service = services[0]["Service"]
+            address = service["Address"]
+            port = service["Port"]
 
-    logger.info(f"Serviço {name} descoberto no endereço {service_addr}:{service_port}")
-    return f"{service_addr}:{service_port}"
+            logger.info(f"Serviço '{name}' descoberto em {address}:{port}")
+            return f"{address}:{port}"

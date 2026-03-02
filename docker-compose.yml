@@ -11,7 +11,7 @@ services:
       POSTGRES_DB: marketplace
     
     ports:
-      - "5433:5432"
+      - "5434:5432"
     
     volumes:
       - ./marketplace/server/db/migrations.sql:/docker-entrypoint-initdb.d/migrations.sql
@@ -57,8 +57,165 @@ services:
       - "8500:8500"
     
     command: "agent -dev -client=0.0.0.0"
+  
+  marketplace_primary_server:
+    build:
+      context: .
+      dockerfile: marketplace/server/Dockerfile
+    container_name: marketplace_primary_server
+    
+    restart: unless-stopped
+
+    environment:
+      GRPC_PORT: 50051
+      IS_PRIMARY: "true"
+      SECONDARY_ADDRESS: marketplace_secondary_server:50054
+      DATABASE_HOST: marketplace_database
+      DATABASE_PORT: 5432
+      DATABASE_USER: marketplace_user
+      DATABASE_PASSWORD: marketplace_password
+      DATABASE_NAME: marketplace
+      CONSUL_HOST: consul
+      CONSUL_PORT: 8500
+    
+    ports:
+      - "50051:50051"
+    
+    depends_on:
+      marketplace_database:
+        condition: service_healthy
+      consul:
+        condition: service_started
+  
+  marketplace_secondary_server:
+    build:
+      context: .
+      dockerfile: marketplace/server/Dockerfile
+    container_name: marketplace_secondary_server
+    
+    restart: unless-stopped
+
+    environment:
+      GRPC_PORT: 50054
+      IS_PRIMARY: "false"
+      SECONDARY_ADDRESS: marketplace_primary_server:50051
+      DATABASE_HOST: marketplace_database
+      DATABASE_PORT: 5432
+      DATABASE_USER: marketplace_user
+      DATABASE_PASSWORD: marketplace_password
+      DATABASE_NAME: marketplace
+      CONSUL_HOST: consul
+      CONSUL_PORT: 8500
+    
+    ports:
+      - "50054:50054"
+    
+    depends_on:
+      marketplace_database:
+        condition: service_healthy
+      consul:
+        condition: service_started
+  
+  marketplace_gateway:
+    build:
+      context: .
+      dockerfile: marketplace/gateway/Dockerfile
+    container_name: marketplace_gateway
+
+    restart: unless-stopped
+
+    environment:
+      HTTP_PORT: 8001
+      MARKETPLACE_HOST: marketplace_primary_server
+      MARKETPLACE_PORT: 50051
+    
+    ports:
+      - "8001:8001"
+    
+    depends_on:
+      - marketplace_primary_server
+  
+  notifications_primary_server:
+    build:
+      context: .
+      dockerfile: notifications/server/Dockerfile
+    container_name: notifications_primary_server
+
+    restart: unless-stopped
+
+    environment:
+      GRPC_PORT: 50052
+      IS_PRIMARY: "true"
+      SECONDARY_ADDRESS: notifications_secondary_server:50053
+      DATABASE_HOST: notifications_database
+      DATABASE_PORT: 5432
+      DATABASE_USER: notifications_user
+      DATABASE_PASSWORD: notifications_password
+      DATABASE_NAME: notifications
+      CONSUL_HOST: consul
+      CONSUL_PORT: 8500
+      SERVICE_NAME: notifications-service
+
+    ports:
+      - "50052:50052"
+    
+    depends_on:
+      notifications_database:
+        condition: service_healthy
+      consul:
+        condition: service_started
+  
+  notifications_secondary_server:
+    build:
+      context: .
+      dockerfile: notifications/server/Dockerfile
+    container_name: notifications_secondary_server
+
+    restart: unless-stopped
+
+    environment:
+      GRPC_PORT: 50053
+      IS_PRIMARY: "true"
+      SECONDARY_ADDRESS: notifications_primary_server:50052
+      DATABASE_HOST: notifications_database
+      DATABASE_PORT: 5432
+      DATABASE_USER: notifications_user
+      DATABASE_PASSWORD: notifications_password
+      DATABASE_NAME: notifications
+      CONSUL_HOST: consul
+      CONSUL_PORT: 8500
+      SERVICE_NAME: notifications-service
+
+    ports:
+      - "50053:50053"
+    
+    depends_on:
+      notifications_database:
+        condition: service_healthy
+      consul:
+        condition: service_started
+  
+  notifications_gateway:
+    build:
+      context: .
+      dockerfile: notifications/gateway/Dockerfile
+    container_name: notifications_gateway
+
+    restart: unless-stopped
+
+    environment:
+      HTTP_PORT: 8001
+      MARKETPLACE_HOST: notifications_primary_server
+      MARKETPLACE_PORT: 50052
+    
+    ports:
+      - "8000:8000"
+    
+    depends_on:
+      - notifications_primary_server
+
 
 
 volumes:
-  notifications_database_data:
   marketplace_database_data:
+  notifications_database_data:

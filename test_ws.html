@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Teste WebSocket</title>
+</head>
+<body>
+  <h2>Notificações em tempo real</h2>
+  <p>Status: <span id="status">Desconectado</span></p>
+  <ul id="eventos"></ul>
+
+  <script>
+    const ws = new WebSocket("ws://localhost:8000/ws/joao");
+
+    ws.onopen = () => {
+      document.getElementById("status").innerText = "Conectado!";
+    };
+
+    ws.onmessage = (e) => {
+      const li = document.createElement("li");
+      li.innerText = e.data;
+      document.getElementById("eventos").appendChild(li);
+    };
+
+    ws.onclose = () => {
+      document.getElementById("status").innerText = "Desconectado.";
+    };
+
+    ws.onerror = (e) => {
+      document.getElementById("status").innerText = "Erro na conexão.";
+    };
+  </script>
+</body>
+</html>

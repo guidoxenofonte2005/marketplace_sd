@@ -18,9 +18,9 @@ async def websocketEndpoint(webSocket: WebSocket, user_id: str):
 
     try:
         stub = await getStub()
-        eventStream = await with_retry(lambda: stub.Subscribe(
+        eventStream = stub.Subscribe(
             notifications_pb2.SubscribeRequest(user_id=user_id)
-        ))
+        )
 
         async for event in eventStream:
             jsonPayload = {
@@ -41,5 +41,5 @@ async def websocketEndpoint(webSocket: WebSocket, user_id: str):
         await webSocket.close()
     finally:
         # fecha com segurança no final
-        eventStream.close()
+        eventStream.cancel()
         logger.info(f"Stream gRPC fechado ao usuário {user_id}")

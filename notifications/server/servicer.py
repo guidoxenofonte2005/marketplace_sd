@@ -100,13 +100,11 @@ class NotificationServicer(notifications_pb2_grpc.NotificationServiceServicer):
         # Loop infinito enquanto o cliente estiver conectado
         try:
             while True:
-                if not context.is_active():
-                    break
                 try:
                     event = await asyncio.wait_for(
                         queue.get(), 5.0
                     )  # espera uma nova notificação
-                    await context.write(event)  # envia para o gateway
+                    yield event  # envia para o gateway
                 except asyncio.TimeoutError:
                     continue
         finally:
