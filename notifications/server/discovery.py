@@ -1,39 +1,51 @@
-import consul
-
-import asyncio
-
-if not hasattr(asyncio, "coroutine"):
-    asyncio.coroutine = lambda f: f
-
-from consul.aio import Consul
-from notifications.server.config import settings
+import aiohttp
 from loguru import logger
+from notifications.server.config import settings
+
+CONSUL_BASE = f"http://{settings.consul_host}:{settings.consul_port}/v1"
 
 
-async def register() -> None:
-    client = Consul(host=settings.consul_host, port=settings.consul_port)
+async def register():
+    payload = {
+        "Name": settings.service_name,
+        "Address": "172.17.0.1",
+        "Port": settings.grpc_port,
+        "Check": {
+            "TCP": f"172.17.0.1:{settings.grpc_port}",
+            "Interval": "10s",
+            "DeregisterCriticalServiceAfter": "1m"
+        }
+    }
 
-    client.agent.service.register(
-        name=settings.service_name,
-        address="localhost",
-        port=settings.grpc_port,
-        check=consul.Check.ttl("15s"),
-    )
+    async with aiohttp.ClientSession() as session:
+        async with session.put(
+            f"{CONSUL_BASE}/agent/service/register",
+            json=payload
+        ) as response:
+            if response.status == 200:
+                logger.info(f"Serviço '{settings.service_name}' registrado no Consul.")
+            else:
+                text = await response.text()
+                raise RuntimeError(f"Erro ao registrar: {response.status} — {text}")
 
-    logger.info(f"Serviço {settings.service_name} encontrado no Consul")
 
+async def get_service(name: str) -> str:
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            f"{CONSUL_BASE}/health/service/{name}",
+            params={"passing": "true"}
+        ) as response:
+            if response.status != 200:
+                raise RuntimeError(f"Erro ao consultar Consul: {response.status}")
 
-async def getService(name: str) -> str:
-    client = Consul(host=settings.consul_host, port=settings.consul_port)
+            services = await response.json()
 
-    _, services = await client.health.service(name, passing=True)
+            if not services:
+                raise RuntimeError(f"Nenhuma instância saudável encontrada para '{name}'")
 
-    if not services:
-        raise RuntimeError(f"Nenhuma instância de serviço encontrada para {name}")
+            service = services[0]["Service"]
+            address = service["Address"]
+            port = service["Port"]
 
-    service = services[0]["Service"]
-    service_addr = service["Address"]
-    service_port = service["Port"]
-
-    logger.info(f"Serviço {name} descoberto no endereço {service_addr}:{service_port}")
-    return f"{service_addr}:{service_port}"
+            logger.info(f"Serviço '{name}' descoberto em {address}:{port}")
+            return f"{address}:{port}"

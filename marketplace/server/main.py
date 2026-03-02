@@ -16,9 +16,15 @@ async def serve():
 
         async def health_check() -> bool:
             try:
+                address = await discovery.getService("notifications-service")
+                async with grpc.aio.insecure_channel(address) as channel:
+                    await asyncio.wait_for(
+                        channel.channel_ready(),
+                        timeout=2.0
+                    )
                 # tenta uma query simples para validar DB/infra
-                async with (await get_pool()).acquire() as conn:
-                    await conn.fetchval("SELECT 1")
+                # async with (await get_pool()).acquire() as conn:
+                #     await conn.fetchval("SELECT 1")
                 return True
             except Exception:
                 logger.warning("health_check falhou")

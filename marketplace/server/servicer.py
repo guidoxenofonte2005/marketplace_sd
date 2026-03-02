@@ -1,3 +1,6 @@
+import asyncio
+import json
+
 import grpc
 
 from loguru import logger
@@ -38,6 +41,10 @@ class MarketplaceServicer(marketplace_pb2_grpc.MarketplaceServiceServicer):
                 for row in rows
             ]
 
+            logger.info(
+                f"Circuit Breaker — estado: {self.circuit.state}, falhas: {self.circuit.failures}"
+            )
+
             return marketplace_pb2.ListProductsResponse(product_lists=product_list)
         except Exception as e:
             logger.exception("Erro em ListProducts")
@@ -51,6 +58,10 @@ class MarketplaceServicer(marketplace_pb2_grpc.MarketplaceServiceServicer):
             pool = await get_pool()
             async with pool.acquire() as connection:
                 product = await products.get_product(connection, request.product_id)
+
+            logger.info(
+                f"Circuit Breaker — estado: {self.circuit.state}, falhas: {self.circuit.failures}"
+            )
 
             return marketplace_pb2.Product(
                 id=str(product["id"]),
@@ -87,21 +98,34 @@ class MarketplaceServicer(marketplace_pb2_grpc.MarketplaceServiceServicer):
                 orderItems = await queries.getOrderItems(
                     connection=connection, order_id=order["id"]
                 )
-            logger.info(f"Pedido {order["id"]} criado para comprador {request.buyer_id}")
+            logger.info(
+                f"Pedido {order["id"]} criado para comprador {request.buyer_id}"
+            )
 
             from marketplace.server import event_emitter
-            # TODO: fazer event_emitter antes de criar aqui
+
+            asyncio.create_task(
+                event_emitter.emit(
+                    event_type="order_confirmed",
+                    payload=json.dumps({"order_id": str(order["id"])}),
+                    target_user=request.buyer_id,
+                    circuit_breaker=self.circuit,
+                )
+            )
 
             if settings.is_primary:
                 pass
-                # TODO: fazer replication antes de criar aqui
-            
+
             responseItems = [
                 marketplace_pb2.OrderItem(
-                    product_id=str(item["product_id"]),
-                    quantity=item["quantity"]
-                ) for item in orderItems
+                    product_id=str(item["product_id"]), quantity=item["quantity"]
+                )
+                for item in orderItems
             ]
+
+            logger.info(
+                f"Circuit Breaker — estado: {self.circuit.state}, falhas: {self.circuit.failures}"
+            )
 
             return marketplace_pb2.Order(
                 id=str(order["id"]),
@@ -115,8 +139,7 @@ class MarketplaceServicer(marketplace_pb2_grpc.MarketplaceServiceServicer):
             return marketplace_pb2.Order()
         except CircuitOpenError:
             await context.abort(
-                grpc.StatusCode.UNAVAILABLE,
-                "Serviço temporariamente indisponível"
+                grpc.StatusCode.UNAVAILABLE, "Serviço temporariamente indisponível"
             )
         except Exception as e:
             logger.exception("Erro em PlaceOrder")
@@ -181,6 +204,10 @@ class MarketplaceServicer(marketplace_pb2_grpc.MarketplaceServiceServicer):
                 )
                 for item in items
             ]
+
+            logger.info(
+                f"Circuit Breaker — estado: {self.circuit.state}, falhas: {self.circuit.failures}"
+            )
 
             return marketplace_pb2.Order(
                 id=str(order["id"]),
