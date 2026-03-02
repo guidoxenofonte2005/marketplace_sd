@@ -7,7 +7,7 @@ from loguru import logger
 from generated import marketplace_pb2, marketplace_pb2_grpc
 
 from marketplace.server.circuit_breaker import CircuitBreaker, CircuitOpenError
-from marketplace.server import products, orders, event_emitter
+from marketplace.server import products, orders, event_emitter, replication
 from marketplace.server.config import settings
 
 from marketplace.server.db import queries
@@ -114,7 +114,7 @@ class MarketplaceServicer(marketplace_pb2_grpc.MarketplaceServiceServicer):
             )
 
             if settings.is_primary:
-                pass
+                asyncio.create_task(replication.replicate_order(order=order, items=orderItems))
 
             responseItems = [
                 marketplace_pb2.OrderItem(

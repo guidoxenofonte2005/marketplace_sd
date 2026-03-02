@@ -20,7 +20,7 @@ async def with_retry(function):
             ]
 
             if grpcError not in retryable_errors:
-                pass
+                raise
 
             last_error = grpcError
             new_delay = BASE_DELAY * (2**attempt)
