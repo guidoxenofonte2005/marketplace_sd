@@ -39,3 +39,25 @@ do usuário correto.
 * **Sincronização:** Relógios de Lamport para ordenar eventos de múltiplas fontes em ordem causal.
 * **Descoberta de Serviços:** Registra-se no Consul para ser descoberto pelo Marketplace.
 * **Consistência Eventual:** Duas instâncias com propagação assíncrona de eventos.
+
+# Instalação e Execução
+- Baixe o repositório
+- Vá até a pasta raiz do repositório
+- Execute o comando `docker compose up --build -d`
+  - Exclusivo para execução em **Linux** ou no **WSL**
+  - Checagem pode ser feita pelos comandos:
+    ```bash
+    # inicialização
+    docker compose up --build -d
+
+    # desligamento
+    docker compose down -v
+
+    # checagem de saúde
+    docker compose ps
+    ```
+  - É fortemente recomendado o uso do *[https://github.com/jesseduffield/lazydocker](lazydocker)* caso não queira utilizar o Docker Desktop
+- Para visualização/testes, estão disponíveis os endereços:
+  - `localhost:8500`: Serviço do Consul (mostra os serviços disponíveis)
+  - `localhost:8001/docs`: Área de testes do FastAPI (teste de todas as rotas)
+  - Pendente: frontend/interface geral
