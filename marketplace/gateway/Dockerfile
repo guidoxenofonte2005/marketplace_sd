@@ -6,16 +6,16 @@ WORKDIR /app
 # TIRA O BUFFER DO TERMINAL DO PYTHON
 ENV PYTHONUNBUFFERED=1
 
-COPY requirements.txt .
+COPY marketplace/gateway/requirements.txt .
 
 # INSTALA OS REQUERIMENTOS DO PROJETO
 RUN pip install --no-cache-dir -r requirements.txt
 
 # COPIA AS COISAS DO PROTO
-COPY ../../generated ./generated
+COPY generated ./generated
 
 # ATUALIZA A ESTRUTURA PRO PYTHON
-COPY . ./marketplace/gateway
+COPY marketplace/gateway ./marketplace/gateway
 
 # EXPÕE A PORTA
 EXPOSE 8000

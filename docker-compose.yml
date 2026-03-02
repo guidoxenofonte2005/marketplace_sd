@@ -60,8 +60,8 @@ services:
   
   marketplace_primary_server:
     build:
-      context: ./marketplace/server
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: marketplace/server/Dockerfile
     container_name: marketplace_primary_server
     
     restart: unless-stopped
@@ -89,8 +89,8 @@ services:
   
   marketplace_secondary_server:
     build:
-      context: ./marketplace/server
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: marketplace/server/Dockerfile
     container_name: marketplace_secondary_server
     
     restart: unless-stopped
@@ -118,8 +118,8 @@ services:
   
   marketplace_gateway:
     build:
-      context: ./marketplace/gateway
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: marketplace/gateway/Dockerfile
     container_name: marketplace_gateway
 
     restart: unless-stopped
@@ -137,8 +137,8 @@ services:
   
   notifications_primary_server:
     build:
-      context: ./notifications/server
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: notifications/server/Dockerfile
     container_name: notifications_primary_server
 
     restart: unless-stopped
@@ -165,10 +165,10 @@ services:
       consul:
         condition: service_started
   
-  notifications_primary_server:
+  notifications_secondary_server:
     build:
-      context: ./notifications/server
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: notifications/server/Dockerfile
     container_name: notifications_secondary_server
 
     restart: unless-stopped
@@ -197,8 +197,8 @@ services:
   
   notifications_gateway:
     build:
-      context: ./notifications/gateway
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: notifications/gateway/Dockerfile
     container_name: notifications_gateway
 
     restart: unless-stopped
