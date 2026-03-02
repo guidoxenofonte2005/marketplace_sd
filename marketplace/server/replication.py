@@ -28,7 +28,7 @@ async def replicate_order(order, items):
         ) as channel:
             stub = marketplace_pb2_grpc.ReplicationServiceStub(channel=channel)
             await stub.ReplicateOrder(
-                marketplace_pb2.ReplicateOrderRequest(order=order)
+                marketplace_pb2.ReplicateOrderRequest(order=replicatedOrder)
             )
             logger.info(
                 f"Pedido {order["id"]} replicado para {settings.secondary_address}"

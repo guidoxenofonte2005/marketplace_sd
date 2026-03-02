@@ -220,3 +220,18 @@ class MarketplaceServicer(marketplace_pb2_grpc.MarketplaceServiceServicer):
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details(str(e))
             return marketplace_pb2.Order()
+
+class MarketplaceReplicationServicer(marketplace_pb2_grpc.ReplicationServiceServicer):
+    async def ReplicateOrder(self, request, context):
+        order = request.order
+        try:
+            pool = await get_pool()
+            async with pool.acquire() as conn:
+                await queries.replicateOrder(conn, order)
+            logger.info(f"Pedido {order.id} salvo na instância secundária")
+        except Exception as e:
+            logger.warning(f"Erro ao salvar pedido replicado {order.id}: {e}")
+        return marketplace_pb2_grpc.marketplace__pb2.ReplicationAcknowledgement(success=True)
+
+    async def ReplicateProduct(self, request, context):
+        return marketplace_pb2_grpc.marketplace__pb2.ReplicationAcknowledgement(success=True)

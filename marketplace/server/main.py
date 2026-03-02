@@ -5,7 +5,7 @@ from loguru import logger
 from generated import marketplace_pb2_grpc
 from marketplace.server import discovery
 from marketplace.server.config import settings
-from marketplace.server.servicer import MarketplaceServicer
+from marketplace.server.servicer import MarketplaceReplicationServicer, MarketplaceServicer
 from marketplace.server.db.connection import get_pool, close_pool
 from marketplace.server.circuit_breaker import CircuitBreaker
 
@@ -39,6 +39,9 @@ async def serve():
         server = grpc.aio.server()
         marketplace_pb2_grpc.add_MarketplaceServiceServicer_to_server(
             MarketplaceServicer(circuit=cb), server
+        )
+        marketplace_pb2_grpc.add_ReplicationServiceServicer_to_server(
+            MarketplaceReplicationServicer(), server
         )
         server.add_insecure_port(f"[::]:{settings.grpc_port}")
         await server.start()

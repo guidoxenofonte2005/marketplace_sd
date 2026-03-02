@@ -50,3 +50,15 @@ async def getOrderItems(connection, order_id):
         "SELECT * FROM order_items WHERE order_id = $1", order_id
     )
     return response
+
+# replication query
+async def replicateOrder(connection, order):
+    await connection.execute(
+        "INSERT INTO orders (id, buyer_id, status) VALUES ($1, $2, $3) ON CONFLICT (id) DO NOTHING",
+        order.id, order.buyer_id, order.status
+    )
+    for item in order.ordered_items:
+        await connection.execute(
+            "INSERT INTO order_items (order_id, product_id, quantity) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING",
+            order.id, item.product_id, item.quantity
+        )

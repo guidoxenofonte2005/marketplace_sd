@@ -126,8 +126,8 @@ services:
 
     environment:
       HTTP_PORT: 8001
-      MARKETPLACE_HOST: marketplace_primary_server
-      MARKETPLACE_PORT: 50051
+      GRPC_HOST: marketplace_primary_server
+      GRPC_PORT: 50051
     
     ports:
       - "8001:8001"
@@ -205,8 +205,8 @@ services:
 
     environment:
       HTTP_PORT: 8001
-      MARKETPLACE_HOST: notifications_primary_server
-      MARKETPLACE_PORT: 50052
+      GRPC_HOST: notifications_primary_server
+      GRPC_PORT: 50052
     
     ports:
       - "8000:8000"
