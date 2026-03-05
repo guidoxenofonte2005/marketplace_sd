@@ -209,7 +209,7 @@ services:
       GRPC_PORT: 50052
     
     ports:
-      - "8000:8000"
+      - "8000:8001"
     
     depends_on:
       - notifications_primary_server
